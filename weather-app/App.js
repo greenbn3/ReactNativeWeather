@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, SafeAreaView, View } from 'react-native';
 import * as Location from 'expo-location';
 import React, {useEffect, useState} from 'react';
+import WeatherInfo from './components/Weatherinfo'
 
 const WEATHER_API_KEY = 'c4120ec26e659695577bbcb70865ff3b'
 const BASE_WEATHER = 'https://api.openweathermap.org/data/2.5/weather?'
@@ -10,6 +11,7 @@ export default function App() {
 
   const [errorMessage, setErrorMessage] = useState(null)
   const [currentWeather, setCurrentWeather] = useState(null)
+  const [unitSystem, setUnitSystem] = useState('imperial') 
 
   useEffect(() => {
     load()
@@ -28,7 +30,7 @@ export default function App() {
 
       const {latitude, longitude} = location.coords
 
-      const weatherURL = `${BASE_WEATHER}lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`
+      const weatherURL = `${BASE_WEATHER}lat=${latitude}&lon=${longitude}&units=${unitSystem}&appid=${WEATHER_API_KEY}`
 
       const response = await fetch(weatherURL)
 
@@ -42,7 +44,7 @@ export default function App() {
       }
 
 
-      alert(`Latitude : ${latitude}, Longitude: ${longitude}`)
+      //alert(`Latitude : ${latitude}, Longitude: ${longitude}`)
 
     } catch (error) {
       setErrorMessage(error.message)
@@ -54,8 +56,10 @@ export default function App() {
       } = currentWeather
     return (
       <View style={styles.container}>
-        <Text>{temp}</Text>
         <StatusBar style="auto" />
+        <View style={styles.main}>
+          <WeatherInfo currentWeather={currentWeather} />
+        </View>
       </View>
     )} else {
       return (
@@ -70,7 +74,10 @@ export default function App() {
     container: {
       flex: 1,
       backgroundColor: 'lightblue',
-      alignItems: 'center',
       justifyContent: 'center',
     },
+    main: {
+      justifyContent: 'center',
+      flex: 1,
+    }
 });
